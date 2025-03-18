@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { Button, Card, Table, Tooltip, message } from "antd";
+import { Button, Card, Table, Tooltip } from "antd";
 
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { EditOutlined } from "@ant-design/icons";
 import AvatarStatus from "components/shared-components/AvatarStatus";
-import { UserView } from "./UserView";
+
+import { EditUser } from "./EditUser";
 
 const Home = () => {
   const [users, setUsers] = useState([]);
@@ -20,13 +21,6 @@ const Home = () => {
   const closeUserProfile = () => {
     setUserProfileVisible(false);
     setSetSelectedUser(null);
-  };
-
-  const deleteUser = (userId) => {
-    const users = this.state.users.filter((item) => item.id !== userId);
-    setUsers(users);
-
-    message.success({ content: `Deleted user ${userId}`, duration: 2 });
   };
 
   const fetchData = useCallback(async () => {
@@ -52,7 +46,7 @@ const Home = () => {
       dataIndex: "name",
       render: (_, record) => (
         <div className="d-flex">
-          <AvatarStatus name={record.name} subTitle={record.email} />
+          <AvatarStatus name={record.name} subTitle={record.username} />
         </div>
       ),
       sorter: {
@@ -64,11 +58,23 @@ const Home = () => {
       },
     },
     {
-      title: "Adress",
-      dataIndex: "adress",
+      title: "Email",
+      dataIndex: "email",
+      render: (email) => <p>{email}</p>,
+      sorter: {
+        compare: (a, b) => {
+          a = a.email.toLowerCase();
+          b = b.email.toLowerCase();
+          return a > b ? -1 : b > a ? 1 : 0;
+        },
+      },
+    },
+    {
+      title: "Address",
+      dataIndex: "address",
       render: (address) => <p>{address?.city}</p>,
       sorter: {
-        compare: (a, b) => a.address.length - b.address.length,
+        compare: (a, b) => a.address.city.length - b.address.city.length,
       },
     },
     {
@@ -117,18 +123,19 @@ const Home = () => {
               size="small"
             />
           </Tooltip>
-          <Tooltip title="Delete">
-            <Button
-              danger
-              icon={<DeleteOutlined />}
-              onClick={() => deleteUser(elm.id)}
-              size="small"
-            />
-          </Tooltip>
         </div>
       ),
     },
   ];
+
+  if (userProfileVisible)
+    return (
+      <EditUser
+        user={selectedUser}
+        setUsers={setUsers}
+        closeUserProfile={closeUserProfile}
+      />
+    );
 
   return (
     <Card bodyStyle={{ padding: "0px" }}>
@@ -138,11 +145,6 @@ const Home = () => {
         loading={isLoading}
         pagination={false}
         rowKey="id"
-      />
-      <UserView
-        data={selectedUser}
-        visible={userProfileVisible}
-        close={closeUserProfile}
       />
     </Card>
   );

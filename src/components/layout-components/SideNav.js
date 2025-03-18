@@ -19,7 +19,6 @@ export const SideNav = ({
   localization = true,
 }) => {
   const props = { sideNavTheme, routeInfo, hideGroupTitle, localization };
-  console.log(props);
   return (
     <Sider
       className={`side-nav ${

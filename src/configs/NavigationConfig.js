@@ -1,4 +1,4 @@
-import { DashboardOutlined } from "@ant-design/icons";
+import { DashboardOutlined, EditOutlined } from "@ant-design/icons";
 import { APP_PREFIX_PATH } from "configs/AppConfig";
 
 const dashBoardNavTree = [
@@ -14,7 +14,7 @@ const dashBoardNavTree = [
     key: "planning",
     path: `${APP_PREFIX_PATH}/planning`,
     title: "2d planning",
-    icon: DashboardOutlined,
+    icon: EditOutlined,
     breadcrumb: false,
     submenu: [],
   },

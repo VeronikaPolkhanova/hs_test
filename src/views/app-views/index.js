@@ -1,5 +1,5 @@
 import React, { lazy, Suspense } from "react";
-import { Switch, Route, Redirect } from "react-router-dom";
+import { Switch, Route } from "react-router-dom";
 import Loading from "components/shared-components/Loading";
 import { APP_PREFIX_PATH } from "configs/AppConfig";
 
@@ -15,7 +15,6 @@ export const AppViews = () => {
           path={`${APP_PREFIX_PATH}/planning`}
           component={lazy(() => import(`./planning`))}
         />
-        <Redirect from={`${APP_PREFIX_PATH}`} to={`${APP_PREFIX_PATH}/home`} />
       </Switch>
     </Suspense>
   );
