@@ -1,7 +1,8 @@
 import React, { useState } from "react";
+
+import styled from "styled-components";
 import Draggable from "react-draggable";
 import { Button, Card, Input } from "antd";
-import styled from "styled-components";
 
 const Container = styled.div`
   display: flex;
@@ -35,38 +36,45 @@ const DraggableItemList = styled.div`
 `;
 
 const Board = styled.div`
-  width: 500px;
+  width: 100%;
   height: 500px;
+  position: relative;
 `;
 
-const Planning = () => {
-  const [objects, setObjects] = useState([]);
-  const [layout, setLayout] = useState([]);
+const initialObjects = [
+  {
+    id: "table",
+    url: "https://img2.freepng.ru/lnd/20240425/zow/aazjgfixb.webp",
+  },
+  {
+    id: "chair",
+    url: "https://img.freepik.com/premium-photo/office-chair-top-view-modern-designer-furniture-chair-isolated-white-background_2239-10497.jpg?w=1060",
+  },
+  {
+    id: "flower",
+    url: "https://img.freepik.com/premium-vector/illustration-house-plant-pot_484720-163.jpg?w=1060",
+  },
+];
 
-  const initialObjects = [
-    {
-      id: "table",
-      url: "https://img2.freepng.ru/lnd/20240425/zow/aazjgfixb.webp",
-    },
-    {
-      id: "chair",
-      url: "https://img.freepik.com/premium-photo/office-chair-top-view-modern-designer-furniture-chair-isolated-white-background_2239-10497.jpg?w=1060",
-    },
-    {
-      id: "flower",
-      url: "https://img.freepik.com/premium-vector/illustration-house-plant-pot_484720-163.jpg?w=1060",
-    },
-  ];
+const Planning = () => {
+  const [layout, setLayout] = useState([]);
 
   const handleDrop = (e, id, url) => {
     const newObject = {
       id: `${id}-${Date.now()}`,
       type: id,
       url: url,
-      x: 0, // смещение для центрирования
+      x: 0,
       y: 0,
     };
     setLayout((prev) => [...prev, newObject]);
+  };
+
+  const onStop = (_, data) => (id) => {
+    const result = layout.map((it) =>
+      it.id === id ? { ...it, x: data.x, y: data.y } : it
+    );
+    setLayout(result);
   };
 
   const saveLayout = () => {
@@ -104,7 +112,21 @@ const Planning = () => {
     </>
   );
 
-  console.log(layout);
+  const board = (
+    <Board>
+      {layout.map((it) => (
+        <Draggable
+          key={it.id}
+          defaultPosition={{ x: it.x, y: it.y }}
+          bounds="parent"
+          onStop={(e, data) => onStop(e, data)(it.id)}>
+          <DraggableItem>
+            <img alt={it.id} src={it.url} />
+          </DraggableItem>
+        </Draggable>
+      ))}
+    </Board>
+  );
 
   return (
     <Container>
@@ -120,18 +142,7 @@ const Planning = () => {
         </Layout>
       </Card>
       <Card title="Board" style={{ width: "100%" }}>
-        <Board>
-          {layout.map((item) => (
-            <Draggable
-              key={item.id}
-              defaultPosition={{ x: item.x, y: item.y }}
-              bounds={{ left: 0, top: 0, right: 400, bottom: 400 }}>
-              <DraggableItem>
-                <img alt={item.id} src={item.url} />
-              </DraggableItem>
-            </Draggable>
-          ))}
-        </Board>
+        {board}
       </Card>
     </Container>
   );
